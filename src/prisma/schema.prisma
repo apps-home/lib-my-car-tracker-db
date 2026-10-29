@@ -11,7 +11,6 @@ datasource db {
 // ==========================================
 // SCHEMA: better-auth
 // ==========================================
-// Copiados de @lib/auth/prisma/better-auth.prisma, com as relações do domínio no User
 
 model User {
   id                   String                @id
@@ -104,21 +103,21 @@ enum FuelType {
 }
 
 enum ExpenseCategory {
-  TOLL          // Pedágio
-  PARKING       // Estacionamento
-  IPVA          // Imposto anual
-  LICENSING     // Licenciamento / Taxas DETRAN
-  INSURANCE     // Seguro automotivo
-  CAR_WASH      // Lavagem / Estética / Higienização
-  FINE          // Multa de trânsito
-  ACCESSORY     // Acessórios / Equipamentos
-  OTHER         // Outras despesas
+  TOLL // Pedágio
+  PARKING // Estacionamento
+  IPVA // Imposto anual
+  LICENSING // Licenciamento / Taxas DETRAN
+  INSURANCE // Seguro automotivo
+  CAR_WASH // Lavagem / Estética / Higienização
+  FINE // Multa de trânsito
+  ACCESSORY // Acessórios / Equipamentos
+  OTHER // Outras despesas
 
   @@schema("my-car-tracker")
 }
 
 enum PaymentMethod {
-  TAG           // Sem Parar, Veloe, ConectCar, Taggy
+  TAG // Sem Parar, Veloe, ConectCar, Taggy
   PIX
   CREDIT_CARD
   DEBIT_CARD
@@ -128,25 +127,25 @@ enum PaymentMethod {
 }
 
 enum MaintenanceType {
-  PREVENTIVE    // Revisão periódica / preventiva
-  CORRECTIVE    // Conserto de defeito / quebra
-  INSPECTION    // Vistoria / Laudo / Alinhamento
+  PREVENTIVE // Revisão periódica / preventiva
+  CORRECTIVE // Conserto de defeito / quebra
+  INSPECTION // Vistoria / Laudo / Alinhamento
 
   @@schema("my-car-tracker")
 }
 
 enum ScheduleTriggerRule {
-  TIME_ONLY           // Ex.: Palhetas do limpador (a cada 12 meses)
-  ODOMETER_ONLY       // Ex.: Rodízio de pneus (a cada 10.000 km)
+  TIME_ONLY // Ex.: Palhetas do limpador (a cada 12 meses)
+  ODOMETER_ONLY // Ex.: Rodízio de pneus (a cada 10.000 km)
   WHICHEVER_COMES_FIRST // Ex.: Troca de óleo (6 meses OU 10.000 km)
 
   @@schema("my-car-tracker")
 }
 
 enum ScheduleAlertStatus {
-  ON_TRACK      // Em dia
-  DUE_SOON      // Próximo do vencimento (dentro da janela de alerta)
-  OVERDUE       // Vencido (por tempo ou por km)
+  ON_TRACK // Em dia
+  DUE_SOON // Próximo do vencimento (dentro da janela de alerta)
+  OVERDUE // Vencido (por tempo ou por km)
 
   @@schema("my-car-tracker")
 }
@@ -154,16 +153,16 @@ enum ScheduleAlertStatus {
 model Vehicle {
   id                     String   @id @default(uuid())
   userId                 String
-  name                   String   // Apelido (ex.: "Civic Touring", "Polo Highline")
-  brand                  String   // Ex.: Honda, Volkswagen
-  model                  String   // Ex.: Civic, Polo
-  modelYear              Int      // Ex.: 2023
-  manufactureYear        Int?     // Ex.: 2022
-  licensePlate           String?  // Placa Mercosul/Antiga
+  name                   String // Apelido (ex.: "Civic Touring", "Polo Highline")
+  brand                  String // Ex.: Honda, Volkswagen
+  model                  String // Ex.: Civic, Polo
+  modelYear              Int // Ex.: 2023
+  manufactureYear        Int? // Ex.: 2022
+  licensePlate           String? // Placa Mercosul/Antiga
   color                  String?
-  currentOdometerKm      Int      // Atualizado automaticamente a cada lançamento com km maior
-  initialOdometerKm      Int      // Km no momento em que o usuário adquiriu/cadastrou o carro
-  fuelTankCapacityLiters Int?     // Capacidade do tanque (ex.: 50L)
+  currentOdometerKm      Int // Atualizado automaticamente a cada lançamento com km maior
+  initialOdometerKm      Int // Km no momento em que o usuário adquiriu/cadastrou o carro
+  fuelTankCapacityLiters Int? // Capacidade do tanque (ex.: 50L)
   defaultFuelType        FuelType @default(GASOLINE_COMMON)
   photoUrl               String?
   isActive               Boolean  @default(true) // false quando o veículo é vendido
@@ -186,14 +185,14 @@ model FuelLog {
   id                    String         @id @default(uuid())
   vehicleId             String
   userId                String
-  date                  DateTime       // Data do abastecimento
-  odometerKm            Int            // Odômetro no momento do abastecimento
+  date                  DateTime // Data do abastecimento
+  odometerKm            Int // Odômetro no momento do abastecimento
   fuelType              FuelType
   liters                Decimal        @db.Decimal(10, 3) // Ex.: 42.350 L
   pricePerLiter         Decimal        @db.Decimal(10, 3) // Ex.: R$ 5.899
   totalCost             Decimal        @db.Decimal(12, 2) // Ex.: R$ 249.82
-  isFullTank            Boolean        @default(true)     // Essencial para cálculo exato de km/L
-  gasStationName        String?        // Nome do posto / bandeira
+  isFullTank            Boolean        @default(true) // Essencial para cálculo exato de km/L
+  gasStationName        String? // Nome do posto / bandeira
   paymentMethod         PaymentMethod?
   // Calculado automaticamente quando isFullTank = true e o anterior também foi tanque cheio
   distanceDrivenKm      Int?
@@ -220,11 +219,11 @@ model VehicleExpense {
   category        ExpenseCategory
   date            DateTime
   amount          Decimal         @db.Decimal(12, 2)
-  description     String          // Ex.: "Pedágio Bandeirantes (Ida/Volta)", "IPVA 1ª Parcela"
-  locationOrRoute String?         // Ex.: "SP-348 Campinas", "Shopping Iguatemi"
-  odometerKm      Int?            // Opcional para despesas gerais
+  description     String // Ex.: "Pedágio Bandeirantes (Ida/Volta)", "IPVA 1ª Parcela"
+  locationOrRoute String? // Ex.: "SP-348 Campinas", "Shopping Iguatemi"
+  odometerKm      Int? // Opcional para despesas gerais
   paymentMethod   PaymentMethod?
-  receiptUrl      String?         // Comprovante no Cloudflare R2
+  receiptUrl      String? // Comprovante no Cloudflare R2
   notes           String?
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
@@ -244,14 +243,14 @@ model MaintenanceRecord {
   vehicleId    String
   userId       String
   type         MaintenanceType @default(PREVENTIVE)
-  title        String          // Ex.: "Revisão de 40.000 km", "Troca de Óleo e Filtros"
+  title        String // Ex.: "Revisão de 40.000 km", "Troca de Óleo e Filtros"
   date         DateTime
   odometerKm   Int
-  workshopName String?         // Nome da oficina / concessionária
+  workshopName String? // Nome da oficina / concessionária
   laborCost    Decimal         @default(0) @db.Decimal(12, 2) // Mão de obra
   partsCost    Decimal         @default(0) @db.Decimal(12, 2) // Soma das peças
-  totalAmount  Decimal         @db.Decimal(12, 2)             // laborCost + partsCost (ou valor fechado)
-  invoiceUrl   String?         // PDF/Foto da OS ou Nota Fiscal no Cloudflare R2
+  totalAmount  Decimal         @db.Decimal(12, 2) // laborCost + partsCost (ou valor fechado)
+  invoiceUrl   String? // PDF/Foto da OS ou Nota Fiscal no Cloudflare R2
   notes        String?
   createdAt    DateTime        @default(now())
   updatedAt    DateTime        @updatedAt
@@ -270,14 +269,14 @@ model MaintenanceRecord {
 model MaintenanceItem {
   id                  String    @id @default(uuid())
   maintenanceRecordId String
-  scheduleId          String?   // Se este item cumpriu uma manutenção periódica programada
-  name                String    // Ex.: "Óleo 5W30 Sintético (4L)", "Filtro de Cabine"
-  brand               String?   // Ex.: Motul, Mann-Filter, Bosch
-  partNumber          String?   // Código da peça (útil para compras futuras)
+  scheduleId          String? // Se este item cumpriu uma manutenção periódica programada
+  name                String // Ex.: "Óleo 5W30 Sintético (4L)", "Filtro de Cabine"
+  brand               String? // Ex.: Motul, Mann-Filter, Bosch
+  partNumber          String? // Código da peça (útil para compras futuras)
   quantity            Decimal   @default(1) @db.Decimal(10, 2)
   unitPrice           Decimal   @db.Decimal(12, 2)
   totalPrice          Decimal   @db.Decimal(12, 2)
-  warrantyMonths      Int?      // Garantia da peça/serviço em meses (ex.: Bateria 24 meses)
+  warrantyMonths      Int? // Garantia da peça/serviço em meses (ex.: Bateria 24 meses)
   warrantyUntil       DateTime? // Calculado: record.date + warrantyMonths
 
   maintenanceRecord MaintenanceRecord    @relation(fields: [maintenanceRecordId], references: [id], onDelete: Cascade)
@@ -293,20 +292,20 @@ model MaintenanceSchedule {
   id                     String              @id @default(uuid())
   vehicleId              String
   userId                 String
-  title                  String              // Ex.: "Troca de Óleo do Motor e Filtro"
-  description            String?             // Especificação (ex.: "Usar 4L de 5W30 API SP")
+  title                  String // Ex.: "Troca de Óleo do Motor e Filtro"
+  description            String? // Especificação (ex.: "Usar 4L de 5W30 API SP")
   triggerRule            ScheduleTriggerRule @default(WHICHEVER_COMES_FIRST)
   // Intervalos de recorrência
-  intervalMonths         Int?                // Ex.: 6 (a cada 6 meses) ou 12 (1 ano)
-  intervalKm             Int?                // Ex.: 10000 (a cada 10.000 km)
+  intervalMonths         Int? // Ex.: 6 (a cada 6 meses) ou 12 (1 ano)
+  intervalKm             Int? // Ex.: 10000 (a cada 10.000 km)
   // Dados da última execução conhecida
   lastExecutedAt         DateTime?
   lastExecutedOdometerKm Int?
   // Próximo vencimento calculado pela entidade de domínio
-  nextDueDate            DateTime?           // lastExecutedAt + intervalMonths
-  nextDueOdometerKm      Int?                // lastExecutedOdometerKm + intervalKm
+  nextDueDate            DateTime? // lastExecutedAt + intervalMonths
+  nextDueOdometerKm      Int? // lastExecutedOdometerKm + intervalKm
   // Configuração de antecedência do alerta
-  alertDaysBefore        Int                 @default(30)  // Avisa faltando 30 dias
+  alertDaysBefore        Int                 @default(30) // Avisa faltando 30 dias
   alertKmBefore          Int                 @default(500) // Avisa faltando 500 km
   // Estado atual do alerta (evita disparos duplicados no Novu/n8n)
   alertStatus            ScheduleAlertStatus @default(ON_TRACK)

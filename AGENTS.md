@@ -20,7 +20,7 @@ A partir da raiz do monorepo:
 Localização do Schema: `packages/lib-my-car-tracker-db/src/prisma/schema.prisma`  
 Cliente Gerado: `packages/lib-my-car-tracker-db/src/prisma/generated/prisma`
 
-Ainda não há migrations: a primeira sai do primeiro `migrate` contra o `my_car_tracker_db`.
+A primeira migration (`20261029125631_init`) cria os dois schemas e todas as tabelas e já foi aplicada no DEV (Neon). Em PROD, aplique com `migrate:deploy`.
 
 ---
 
