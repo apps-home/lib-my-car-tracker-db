@@ -52,6 +52,7 @@ export const prismaMyCarTracker = {
   maintenanceRecord: prisma.maintenanceRecord,
   maintenanceItem: prisma.maintenanceItem,
   maintenanceSchedule: prisma.maintenanceSchedule,
+  maintenanceTask: prisma.maintenanceTask,
   ...basePrisma
 } as const
 

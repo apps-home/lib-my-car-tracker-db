@@ -27,6 +27,7 @@ model User {
   expenses             VehicleExpense[]
   maintenanceRecords   MaintenanceRecord[]
   maintenanceSchedules MaintenanceSchedule[]
+  maintenanceTasks     MaintenanceTask[]
 
   @@unique([email])
   @@index([email])
@@ -150,6 +151,13 @@ enum ScheduleAlertStatus {
   @@schema("my-car-tracker")
 }
 
+enum MaintenanceTaskPriority {
+  NEXT_VISIT // Próxima parada na oficina
+  FUTURE // Futuras manutenções / Upgrades / Longo prazo
+
+  @@schema("my-car-tracker")
+}
+
 model Vehicle {
   id                     String   @id @default(uuid())
   userId                 String
@@ -175,6 +183,7 @@ model Vehicle {
   expenses             VehicleExpense[]
   maintenanceRecords   MaintenanceRecord[]
   maintenanceSchedules MaintenanceSchedule[]
+  maintenanceTasks     MaintenanceTask[]
 
   @@index([userId, isActive])
   @@map("vehicles")
@@ -191,6 +200,8 @@ model FuelLog {
   liters                Decimal        @db.Decimal(10, 3) // Ex.: 42.350 L
   pricePerLiter         Decimal        @db.Decimal(10, 3) // Ex.: R$ 5.899
   totalCost             Decimal        @db.Decimal(12, 2) // Ex.: R$ 249.82
+  reimbursedAmount      Decimal        @default(0) @db.Decimal(12, 2) // Ajuda / divisão de combustível recebida
+  sharedWith            String? // Quem ajudou (ex.: "Pai, Mãe", "Annalik")
   isFullTank            Boolean        @default(true) // Essencial para cálculo exato de km/L
   gasStationName        String? // Nome do posto / bandeira
   paymentMethod         PaymentMethod?
@@ -321,5 +332,27 @@ model MaintenanceSchedule {
   @@index([vehicleId, isActive])
   @@index([userId, alertStatus])
   @@map("maintenance_schedules")
+  @@schema("my-car-tracker")
+}
+
+model MaintenanceTask {
+  id          String                  @id @default(uuid())
+  vehicleId   String
+  userId      String
+  title       String // Ex.: "Para-barro esquerdo", "Sensor de ré"
+  priority    MaintenanceTaskPriority @default(NEXT_VISIT)
+  targetYear  Int? // Ex.: 2026, 2027
+  notes       String? // Ex.: "verificar"
+  isCompleted Boolean                 @default(false)
+  completedAt DateTime?
+  createdAt   DateTime                @default(now())
+  updatedAt   DateTime                @updatedAt
+
+  vehicle Vehicle @relation(fields: [vehicleId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([vehicleId, isCompleted, priority])
+  @@index([userId])
+  @@map("maintenance_tasks")
   @@schema("my-car-tracker")
 }
