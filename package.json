@@ -1,0 +1,35 @@
+{
+  "name": "@lib/my-car-tracker-db",
+  "version": "1.0.0",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": "./dist/index.js"
+  },
+  "scripts": {
+    "build": "prisma generate --schema=./src/prisma/schema.prisma && tsc",
+    "push": "prisma db push --schema=./src/prisma/schema.prisma",
+    "migrate": "prisma migrate dev --schema=./src/prisma/schema.prisma",
+    "migrate:deploy": "prisma migrate deploy --schema=./src/prisma/schema.prisma",
+    "migrate:status": "prisma migrate status --schema=./src/prisma/schema.prisma",
+    "studio": "prisma studio --schema=./src/prisma/schema.prisma",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@prisma/adapter-pg": "^7.10.0",
+    "@prisma/client": "^7.8.0",
+    "dotenv": "^17.3.1",
+    "pg": "^8.23.0"
+  },
+  "devDependencies": {
+    "@types/node": "^25.5.0",
+    "@types/pg": "^8.23.1",
+    "prisma": "^7.8.0",
+    "typescript": "^6.0.2"
+  },
+  "files": [
+    "dist",
+    "src/prisma/schema.prisma",
+    "src/prisma/generated"
+  ]
+}
